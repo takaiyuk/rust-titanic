@@ -1,10 +1,10 @@
-use std::collections::HashSet;
-use std::hash::Hash;
-
 use rand::prelude::*;
+use std::collections::HashSet;
 
-pub trait AbstractKFold<T, U> {
-    fn split(&self, data: &[T], labels: Vec<U>) -> Vec<Vec<usize>>;
+use crate::loader::InputData;
+
+pub trait AbstractKFold {
+    fn split(&self, data: &[InputData], labels: Vec<u32>) -> Vec<Vec<usize>>;
 }
 
 pub struct KFold {
@@ -23,8 +23,8 @@ impl KFold {
     }
 }
 
-impl<T, U> AbstractKFold<T, U> for KFold {
-    fn split(&self, data: &[T], _labels: Vec<U>) -> Vec<Vec<usize>> {
+impl AbstractKFold for KFold {
+    fn split(&self, data: &[InputData], _labels: Vec<u32>) -> Vec<Vec<usize>> {
         let rng = rand::thread_rng();
         let mut indices = (0..data.len()).collect::<Vec<_>>();
         if self.shuffle {
@@ -58,11 +58,8 @@ impl StratifiedKFold {
     }
 }
 
-impl<T, U> AbstractKFold<T, U> for StratifiedKFold
-where
-    U: Copy + Eq + Hash,
-{
-    fn split(&self, _data: &[T], labels: Vec<U>) -> Vec<Vec<usize>> {
+impl AbstractKFold for StratifiedKFold {
+    fn split(&self, _data: &[InputData], labels: Vec<u32>) -> Vec<Vec<usize>> {
         let rng = rand::thread_rng();
         let mut indices = (0..labels.len()).collect::<Vec<_>>();
         let mut labels = labels;
@@ -72,7 +69,7 @@ where
                 None => StdRng::from_rng(rng).unwrap(),
             };
             indices.shuffle(&mut rng);
-            labels = indices.iter().map(|&i| labels[i]).collect();
+            labels = indices.iter().map(|i| labels[*i]).collect();
         }
 
         let unique_labels = labels.iter().collect::<HashSet<_>>();
@@ -95,10 +92,32 @@ where
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_StratifiedKFold_split() {
-        fn test() {
-            let data = vec![0; 100];
+    use rstest::*;
+
+    use crate::loader::{Embarked, Sex};
+
+    #[fixture]
+    pub fn fixture_input_data() -> InputData {
+        InputData {
+            passenger_id: 0,
+            survived: None,
+            pclass: Some(3),
+            name: Some("Alice".to_string()),
+            sex: Some(Sex::Female),
+            age: Some(22.0),
+            sibsp: Some(1),
+            parch: Some(0),
+            ticket: Some("A/5 21171".to_string()),
+            fare: Some(7.25),
+            cabin: None,
+            embarked: Some(Embarked::S),
+        }
+    }
+
+    #[rstest]
+    fn test_StratifiedKFold_split(fixture_input_data: InputData) {
+        fn test(input_data: InputData) {
+            let data = vec![input_data; 100];
             let mut labels = vec![0; 10];
             labels.extend(vec![1; 90].iter().copied());
             let mut rng = rand::thread_rng();
@@ -124,7 +143,7 @@ mod tests {
         }
         // seed によってテストが通る場合があるので、何度か試す
         for _ in 0..10 {
-            test();
+            test(fixture_input_data.clone());
         }
     }
 }

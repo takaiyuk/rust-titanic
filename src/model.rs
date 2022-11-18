@@ -4,7 +4,7 @@ use serde_json;
 
 use crate::feature::FeatureData;
 
-pub trait Model {
+pub trait AbstractModel {
     fn train(
         &mut self,
         feature_data: &[FeatureData],
@@ -12,6 +12,7 @@ pub trait Model {
         params: &serde_json::Value,
     ) -> Result<()>;
     fn predict(&self, feature_data: &[FeatureData]) -> Result<Vec<f64>>;
+    fn save(&self, path: &str) -> Result<()>;
 }
 
 pub struct LightGBMModel {
@@ -25,11 +26,6 @@ impl LightGBMModel {
             booster: None,
             feature_names: None,
         }
-    }
-
-    pub fn save(&self, path: &str) -> Result<()> {
-        self.booster.as_ref().unwrap().save_file(path)?;
-        Ok(())
     }
 
     pub fn feature_names(&self) -> Result<Option<Vec<String>>> {
@@ -48,7 +44,7 @@ impl Default for LightGBMModel {
     }
 }
 
-impl Model for LightGBMModel {
+impl AbstractModel for LightGBMModel {
     fn train(
         &mut self,
         feature_data: &[FeatureData],
@@ -80,5 +76,10 @@ impl Model for LightGBMModel {
         // NOTE: `result` is a vector [[n_rows]] because of binary classification.
         // ref: https://github.com/vaaaaanquish/lightgbm-rs/blob/fdac51534170d6ff23d2628827d0d620128f4c1f/src/booster.rs#L94-L148
         Ok(result[0].clone())
+    }
+
+    fn save(&self, path: &str) -> Result<()> {
+        self.booster.as_ref().unwrap().save_file(path)?;
+        Ok(())
     }
 }

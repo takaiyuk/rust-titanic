@@ -33,71 +33,19 @@ pub struct InputData {
 }
 
 impl InputData {
-    fn from_record(record: &StringRecord) -> Result<InputData> {
-        let is_train = if record.len() == 12 {
-            true
-        } else if record.len() == 11 {
-            false
-        } else {
-            panic!("Invalid record length: {}", record.len())
-        };
-
-        let passenger_id = record[0].parse::<u32>()?;
-        let survived = if is_train {
-            Some(record[1].parse::<u32>()?)
-        } else {
-            None
-        };
-        let pclass_index = if is_train { 2 } else { 1 };
-        let pclass = record[pclass_index]
-            .parse::<i32>()
-            .map_or_else(|_| None, Some);
-        let name_index = if is_train { 3 } else { 2 };
-        let name = if !record[name_index].is_empty() {
-            Some(record[name_index].to_string())
-        } else {
-            None
-        };
-        let sex_index = if is_train { 4 } else { 3 };
-        let sex = match &record[sex_index] {
-            "female" => Some(Sex::Female),
-            "male" => Some(Sex::Male),
-            _ => None,
-        };
-        let age_index = if is_train { 5 } else { 4 };
-        let age = record[age_index].parse::<f64>().map_or_else(|_| None, Some);
-        let sibsp_index = if is_train { 6 } else { 5 };
-        let sibsp = record[sibsp_index]
-            .parse::<i32>()
-            .map_or_else(|_| None, Some);
-        let parch_index = if is_train { 7 } else { 6 };
-        let parch = record[parch_index]
-            .parse::<i32>()
-            .map_or_else(|_| None, Some);
-        let ticket_index = if is_train { 8 } else { 7 };
-        let ticket = if !record[ticket_index].is_empty() {
-            Some(record[ticket_index].to_string())
-        } else {
-            None
-        };
-        let fare_index = if is_train { 9 } else { 8 };
-        let fare = record[fare_index]
-            .parse::<f64>()
-            .map_or_else(|_| None, Some);
-        let cabin_index = if is_train { 10 } else { 9 };
-        let cabin = if !record[cabin_index].is_empty() {
-            Some(record[cabin_index].to_string())
-        } else {
-            None
-        };
-        let embarked_index = if is_train { 11 } else { 10 };
-        let embarked = match &record[embarked_index] {
-            "C" => Some(Embarked::C),
-            "Q" => Some(Embarked::Q),
-            "S" => Some(Embarked::S),
-            _ => None,
-        };
-
+    fn from_train_record(record: &StringRecord) -> Result<InputData> {
+        let passenger_id = InputData::parse_passenger_id(&record[0])?;
+        let survived = InputData::parse_survived(&record[1])?;
+        let pclass = InputData::parse_pclass(&record[2])?;
+        let name = InputData::parse_name(&record[3])?;
+        let sex = InputData::parse_sex(&record[4])?;
+        let age = InputData::parse_age(&record[5])?;
+        let sibsp = InputData::parse_sibsp(&record[6])?;
+        let parch = InputData::parse_parch(&record[7])?;
+        let ticket = InputData::parse_ticket(&record[8])?;
+        let fare = InputData::parse_fare(&record[9])?;
+        let cabin = InputData::parse_cabin(&record[10])?;
+        let embarked = InputData::parse_embarked(&record[11])?;
         Ok(InputData {
             passenger_id,
             survived,
@@ -113,24 +61,124 @@ impl InputData {
             embarked,
         })
     }
+
+    fn from_test_record(record: &StringRecord) -> Result<InputData> {
+        let passenger_id = InputData::parse_passenger_id(&record[0])?;
+        let survived = None;
+        let pclass = InputData::parse_pclass(&record[1])?;
+        let name = InputData::parse_name(&record[2])?;
+        let sex = InputData::parse_sex(&record[3])?;
+        let age = InputData::parse_age(&record[4])?;
+        let sibsp = InputData::parse_sibsp(&record[5])?;
+        let parch = InputData::parse_parch(&record[6])?;
+        let ticket = InputData::parse_ticket(&record[7])?;
+        let fare = InputData::parse_fare(&record[8])?;
+        let cabin = InputData::parse_cabin(&record[9])?;
+        let embarked = InputData::parse_embarked(&record[10])?;
+        Ok(InputData {
+            passenger_id,
+            survived,
+            pclass,
+            name,
+            sex,
+            age,
+            sibsp,
+            parch,
+            ticket,
+            fare,
+            cabin,
+            embarked,
+        })
+    }
+
+    fn parse_passenger_id(v: &str) -> Result<u32> {
+        Ok(v.parse::<u32>()?)
+    }
+
+    fn parse_survived(v: &str) -> Result<Option<u32>> {
+        Ok(Some(v.parse::<u32>()?))
+    }
+
+    fn parse_pclass(v: &str) -> Result<Option<i32>> {
+        Ok(v.parse::<i32>().map_or_else(|_| None, Some))
+    }
+
+    fn parse_name(v: &str) -> Result<Option<String>> {
+        if !v.is_empty() {
+            Ok(Some(v.to_string()))
+        } else {
+            Ok(None)
+        }
+    }
+
+    fn parse_sex(v: &str) -> Result<Option<Sex>> {
+        let sex = match v {
+            "female" => Some(Sex::Female),
+            "male" => Some(Sex::Male),
+            _ => None,
+        };
+        Ok(sex)
+    }
+
+    fn parse_age(v: &str) -> Result<Option<f64>> {
+        Ok(v.parse::<f64>().map_or_else(|_| None, Some))
+    }
+
+    fn parse_sibsp(v: &str) -> Result<Option<i32>> {
+        Ok(v.parse::<i32>().map_or_else(|_| None, Some))
+    }
+
+    fn parse_parch(v: &str) -> Result<Option<i32>> {
+        Ok(v.parse::<i32>().map_or_else(|_| None, Some))
+    }
+
+    fn parse_ticket(v: &str) -> Result<Option<String>> {
+        if !v.is_empty() {
+            Ok(Some(v.to_string()))
+        } else {
+            Ok(None)
+        }
+    }
+
+    fn parse_fare(v: &str) -> Result<Option<f64>> {
+        Ok(v.parse::<f64>().map_or_else(|_| None, Some))
+    }
+
+    fn parse_cabin(v: &str) -> Result<Option<String>> {
+        if !v.is_empty() {
+            Ok(Some(v.to_string()))
+        } else {
+            Ok(None)
+        }
+    }
+
+    fn parse_embarked(v: &str) -> Result<Option<Embarked>> {
+        let embarked = match v {
+            "C" => Some(Embarked::C),
+            "Q" => Some(Embarked::Q),
+            "S" => Some(Embarked::S),
+            _ => None,
+        };
+        Ok(embarked)
+    }
 }
 
-pub fn load_train<P: AsRef<Path>>(path: P) -> Result<Vec<InputData>> {
+pub fn load_train_data<P: AsRef<Path>>(path: P) -> Result<Vec<InputData>> {
     let mut rdr = Reader::from_path(path)?;
     let records = rdr
         .records()
         .into_iter()
-        .map(|r| InputData::from_record(&r.unwrap()).unwrap())
+        .map(|r| InputData::from_train_record(&r.unwrap()).unwrap())
         .collect();
     Ok(records)
 }
 
-pub fn load_test<P: AsRef<Path>>(path: P) -> Result<Vec<InputData>> {
+pub fn load_test_data<P: AsRef<Path>>(path: P) -> Result<Vec<InputData>> {
     let mut rdr = Reader::from_path(path)?;
     let records = rdr
         .records()
         .into_iter()
-        .map(|r| InputData::from_record(&r.unwrap()).unwrap())
+        .map(|r| InputData::from_test_record(&r.unwrap()).unwrap())
         .collect();
     Ok(records)
 }
