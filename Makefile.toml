@@ -1,0 +1,72 @@
+[config]
+skip_core_tasks = true
+
+[tasks.default]
+alias = "run"
+
+[tasks.format]
+description = "cargo fmt"
+category = "Development"
+command = "cargo"
+args = ["fmt"]
+
+[tasks.check]
+description = "cargo check"
+category = "Test"
+command = "cargo"
+args = ["check"]
+dependencies = ["format"]
+
+[tasks.build]
+description = "cargo build"
+category = "Build"
+command = "cargo"
+args = ["build"]
+dependencies = ["check"]
+
+[tasks.run]
+description = "cargo run"
+category = "Build"
+command = "cargo"
+args = ["run"]
+dependencies = ["build"]
+
+[tasks.clippy]
+description = "cargo clippy"
+category = "Test"
+command = "cargo"
+args = ["clippy"]
+dependencies = ["check"]
+
+[tasks.test]
+description = "cargo nextest"
+category = "Test"
+install_crate = { crate_name = "cargo-nextest", binary = "cargo", test_arg = ["nextest", "--help"] }
+command = "cargo"
+args = ["nextest", "run"]
+dependencies = ["clippy"]
+
+[tasks.coverage]
+description = "cargo llvm-cov"
+category = "Test"
+install_crate = { crate_name = "cargo-llvm-cov", binary = "cargo", test_arg = ["llvm-cov", "--help"] }
+command = "cargo"
+args = ["llvm-cov"]
+dependencies = ["test"]
+
+[tasks.coverage-html]
+description = "cargo llvm-cov --html"
+category = "Test"
+install_crate = { crate_name = "cargo-llvm-cov", binary = "cargo", test_arg = ["llvm-cov", "--help"] }
+command = "cargo"
+args = ["llvm-cov", "--html"]
+dependencies = ["test"]
+
+[tasks.coverage-open]
+description = "open coverage report"
+category = "Test"
+script_runner = "@shell"
+script = '''
+open $PWD/target/llvm-cov/html/index.html
+'''
+dependencies = ["coverage-html"]

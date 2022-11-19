@@ -4,6 +4,8 @@ Repository which is an attempt to solve the [Titanic ML competition](https://www
 
 ## Setup
 
+### Data
+
 Download [titanic data from kaggle](https://www.kaggle.com/competitions/titanic/data), or use Kaggle API to download the data as below.
 
 ```
@@ -13,10 +15,24 @@ $ unzip titanic.zip -d input/titanic
 $ rm titanic.zip
 ```
 
+### Cargo-make (Optional)
+
+Install `cargo-make` as a task runner
+
+```
+cargo install --force cargo-make
+```
+
 ## Execute
 
 ```
 $ cargo run
+```
+
+If you installed `cargo-make`, you can execute as below
+
+```
+$ cargo make
 ```
 
 ### Result
@@ -39,4 +55,35 @@ Feature importances: [108.4, 57.0, 697.6, 43.6, 30.4, 819.2, 96.8, 118.8, 93.6]
 
 ```
 Public Score: 0.75119
+```
+
+## Development
+
+See the output of `cargo make --list-all-steps`
+
+```
+cargo make --list-all-steps
+[cargo-make] INFO - cargo make 0.36.3
+[cargo-make] INFO - Project: rust-titanic
+[cargo-make] INFO - Build File: Makefile.toml
+[cargo-make] INFO - Task: default
+[cargo-make] INFO - Profile: development
+Build
+----------
+build - cargo build
+default - cargo run
+run - cargo run
+
+Development
+----------
+format - cargo fmt
+
+Test
+----------
+check - cargo check
+clippy - cargo clippy
+coverage - cargo llvm-cov
+coverage-html - cargo llvm-cov --html
+coverage-open - open coverage report
+test - cargo nextest
 ```
