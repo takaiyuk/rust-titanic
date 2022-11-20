@@ -115,6 +115,25 @@ mod tests {
     }
 
     #[rstest]
+    fn test_KFold_split(fixture_input_data: InputData) {
+        fn test(input_data: InputData) {
+            let data = vec![input_data; 100];
+            let mut labels = vec![0; 10];
+            labels.extend(vec![1; 90].iter().copied());
+            let mut rng = rand::thread_rng();
+            labels.shuffle(&mut rng);
+
+            let kfold = KFold::new(2, true, None);
+            let folds = kfold.split(&data, labels.clone());
+            assert_eq!(folds.len(), 2);
+            for index in folds.iter() {
+                assert_eq!(index.len(), 50);
+            }
+        }
+        test(fixture_input_data);
+    }
+
+    #[rstest]
     fn test_StratifiedKFold_split(fixture_input_data: InputData) {
         fn test(input_data: InputData) {
             let data = vec![input_data; 100];
@@ -127,10 +146,10 @@ mod tests {
             let folds = kfold.split(&data, labels.clone());
             assert_eq!(folds.len(), 2);
             for index in folds.iter() {
-                assert_eq!(index.len(), 50);
                 let fold_labels = index.iter().map(|i| labels[*i]).collect::<Vec<_>>();
                 let mut expected = vec![0; 5];
                 expected.extend(vec![1; 45].iter().copied());
+                assert_eq!(index.len(), 50);
                 assert_eq!(
                     fold_labels.iter().filter(|x| **x == 0).count(),
                     expected.iter().filter(|x| **x == 0).count()
