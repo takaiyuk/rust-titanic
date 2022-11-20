@@ -32,10 +32,10 @@ $ cargo run
 If you installed `cargo-make`, you can execute as below
 
 ```
-$ cargo make
+$ cargo make run expXXX
 ```
 
-### Result
+### Result of exp001
 
 ```
 Fold 1
@@ -71,7 +71,6 @@ cargo make --list-all-steps
 Build
 ----------
 build - cargo build
-default - cargo run
 run - cargo run
 
 Development
@@ -84,6 +83,6 @@ check - cargo check
 clippy - cargo clippy
 coverage - cargo llvm-cov
 coverage-html - cargo llvm-cov --html
-coverage-open - open coverage report
+coverage-open - cargo llvm-cov --open
 test - cargo nextest
 ```

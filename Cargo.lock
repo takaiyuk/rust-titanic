@@ -197,6 +197,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp001"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "csv",
+ "lightgbm",
+ "rand",
+ "rstest",
+ "serde_json",
+]
+
+[[package]]
+name = "exp002"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "csv",
+ "lightgbm",
+ "rand",
+ "rstest",
+ "serde_json",
+]
+
+[[package]]
 name = "futures"
 version = "0.3.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -535,18 +559,6 @@ dependencies = [
  "quote 1.0.21",
  "rustc_version",
  "syn 1.0.103",
-]
-
-[[package]]
-name = "rust-titanic"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "csv",
- "lightgbm",
- "rand",
- "rstest",
- "serde_json",
 ]
 
 [[package]]

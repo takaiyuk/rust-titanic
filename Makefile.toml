@@ -1,8 +1,8 @@
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+
 [config]
 skip_core_tasks = true
-
-[tasks.default]
-alias = "run"
 
 [tasks.format]
 description = "cargo fmt"
@@ -27,8 +27,9 @@ dependencies = ["check"]
 [tasks.run]
 description = "cargo run"
 category = "Build"
+workspace = false
 command = "cargo"
-args = ["run"]
+args = ["run", "--bin", "${@}"]
 dependencies = ["build"]
 
 [tasks.clippy]
@@ -49,24 +50,37 @@ dependencies = ["clippy"]
 [tasks.coverage]
 description = "cargo llvm-cov"
 category = "Test"
+workspace = false
 install_crate = { crate_name = "cargo-llvm-cov", binary = "cargo", test_arg = ["llvm-cov", "--help"] }
-command = "cargo"
-args = ["llvm-cov"]
+script_runner = "@shell"
+script = '''
+cd crates/${@} && cargo llvm-cov
+'''
 dependencies = ["test"]
 
 [tasks.coverage-html]
 description = "cargo llvm-cov --html"
 category = "Test"
+workspace = false
 install_crate = { crate_name = "cargo-llvm-cov", binary = "cargo", test_arg = ["llvm-cov", "--help"] }
-command = "cargo"
-args = ["llvm-cov", "--html"]
+script_runner = "@shell"
+script = '''
+cd crates/${@} && cargo llvm-cov --html
+'''
 dependencies = ["test"]
 
 [tasks.coverage-open]
 description = "open coverage report"
 category = "Test"
+workspace = false
 script_runner = "@shell"
 script = '''
-open $PWD/target/llvm-cov/html/index.html
+cd crates/${@} && cargo llvm-cov --open
 '''
 dependencies = ["coverage-html"]
+
+[tasks.clean]
+description = "cargo clean"
+category = "Development"
+command = "cargo"
+args = ["clean"]
