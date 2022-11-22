@@ -1,56 +1,63 @@
-[env]
-CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
-
 [config]
 skip_core_tasks = true
 
 [tasks.format]
 description = "cargo fmt"
 category = "Development"
-command = "cargo"
-args = ["fmt"]
+script_runner = "@shell"
+script = '''
+cd crates/${@} && cargo fmt
+'''
 
 [tasks.check]
 description = "cargo check"
 category = "Test"
-command = "cargo"
-args = ["check"]
+script_runner = "@shell"
+script = '''
+cd crates/${@} && cargo check
+'''
 dependencies = ["format"]
 
 [tasks.build]
 description = "cargo build"
 category = "Build"
-command = "cargo"
-args = ["build"]
+script_runner = "@shell"
+script = '''
+cd crates/${@} && cargo build
+'''
 dependencies = ["check"]
 
 [tasks.run]
 description = "cargo run"
 category = "Build"
-workspace = false
-command = "cargo"
-args = ["run", "--bin", "${@}"]
+script_runner = "@shell"
+script = '''
+cd crates/${@} && cargo run
+'''
 dependencies = ["build"]
 
 [tasks.clippy]
 description = "cargo clippy"
 category = "Test"
-command = "cargo"
-args = ["clippy"]
+script_runner = "@shell"
+script = '''
+cd crates/${@} && cargo clippy
+'''
 dependencies = ["check"]
 
 [tasks.test]
 description = "cargo nextest"
 category = "Test"
 install_crate = { crate_name = "cargo-nextest", binary = "cargo", test_arg = ["nextest", "--help"] }
-command = "cargo"
-args = ["nextest", "run"]
+script_runner = "@shell"
+script = '''
+cd crates/${@} && cargo nextest run
+'''
 dependencies = ["clippy"]
 
 [tasks.coverage]
 description = "cargo llvm-cov"
 category = "Test"
-workspace = false
 install_crate = { crate_name = "cargo-llvm-cov", binary = "cargo", test_arg = ["llvm-cov", "--help"] }
 script_runner = "@shell"
 script = '''
@@ -61,7 +68,6 @@ dependencies = ["test"]
 [tasks.coverage-html]
 description = "cargo llvm-cov --html"
 category = "Test"
-workspace = false
 install_crate = { crate_name = "cargo-llvm-cov", binary = "cargo", test_arg = ["llvm-cov", "--help"] }
 script_runner = "@shell"
 script = '''
@@ -72,15 +78,16 @@ dependencies = ["test"]
 [tasks.coverage-open]
 description = "open coverage report"
 category = "Test"
-workspace = false
 script_runner = "@shell"
 script = '''
 cd crates/${@} && cargo llvm-cov --open
 '''
-dependencies = ["coverage-html"]
+dependencies = ["test"]
 
 [tasks.clean]
 description = "cargo clean"
 category = "Development"
-command = "cargo"
-args = ["clean"]
+script_runner = "@shell"
+script = '''
+cd crates/${@} && cargo clean
+'''
