@@ -34,7 +34,6 @@ fn convert_probability_to_label(probabilities: Vec<f64>) -> Vec<i32> {
 
 fn main() -> Result<()> {
     let project_root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    println!("{:?}", &project_root);
     let train = load_train_data(project_root.join(TRAIN_DATA_PATH))?;
     let labels = train
         .iter()
@@ -46,7 +45,7 @@ fn main() -> Result<()> {
         Config::new(),
         Box::new(FeatureTransformer {}),
         Box::new(StratifiedKFold::new(5, true, Some(42))),
-        LightGBMModel::new(),
+        Box::new(LightGBMModel::new()),
     );
     let prediction_results = runner.run_cv(&train, labels, &test)?;
 

@@ -5,7 +5,7 @@ use crate::feature::AbstractFeatureTransformer;
 use crate::kfold::AbstractKFold;
 use crate::loader::InputData;
 use crate::metrics::accuracy;
-use crate::model::{AbstractModel, LightGBMModel};
+use crate::model::AbstractGBDTModel;
 
 const MODEL_PATH_PREFIX: &str = "output/models";
 
@@ -28,19 +28,19 @@ pub trait AbstractRunner {
     ) -> Result<Vec<PredictionResult>>;
 }
 
-pub struct LightGBMRunner {
+pub struct XGBoostRunner {
     config: Config,
     feature_transformer: Box<dyn AbstractFeatureTransformer>,
     kfold: Box<dyn AbstractKFold>,
-    model: LightGBMModel,
+    model: Box<dyn AbstractGBDTModel>,
 }
 
-impl LightGBMRunner {
+impl XGBoostRunner {
     pub fn new(
         config: Config,
         feature_transformer: Box<dyn AbstractFeatureTransformer>,
         kfold: Box<dyn AbstractKFold>,
-        model: LightGBMModel,
+        model: Box<dyn AbstractGBDTModel>,
     ) -> Self {
         Self {
             config,
@@ -93,7 +93,7 @@ impl LightGBMRunner {
     }
 }
 
-impl AbstractRunner for LightGBMRunner {
+impl AbstractRunner for XGBoostRunner {
     fn run_cv(
         &mut self,
         train: &[InputData],

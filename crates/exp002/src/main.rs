@@ -7,8 +7,8 @@ use exp002::feature::FeatureTransformer;
 use exp002::kfold::StratifiedKFold;
 use exp002::loader::{load_test_data, load_train_data};
 use exp002::metrics::accuracy;
-use exp002::model::LightGBMModel;
-use exp002::runner::{AbstractRunner, LightGBMRunner};
+use exp002::model::XGBoostModel;
+use exp002::runner::{AbstractRunner, XGBoostRunner};
 use exp002::submission::generate_submission;
 
 const TRAIN_DATA_PATH: &str = "../../input/titanic/train.csv";
@@ -41,11 +41,11 @@ fn main() -> Result<()> {
         .collect::<Vec<u32>>();
     let test = load_test_data(project_root.join(TEST_DATA_PATH))?;
 
-    let mut runner = LightGBMRunner::new(
+    let mut runner = XGBoostRunner::new(
         Config::new(),
         Box::new(FeatureTransformer {}),
         Box::new(StratifiedKFold::new(5, true, Some(42))),
-        LightGBMModel::new(),
+        Box::new(XGBoostModel::new()),
     );
     let prediction_results = runner.run_cv(&train, labels, &test)?;
 

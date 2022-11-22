@@ -4,6 +4,18 @@ Repository which is an attempt to solve the [Titanic ML competition](https://www
 
 ## Setup
 
+### Requirement
+
+You need an environment that can build LightGBM for [lightgbm-rs](https://github.com/vaaaaanquish/lightgbm-rs#require).
+
+```
+# linux
+apt install -y cmake libclang-dev libc++-dev gcc-multilib
+
+# OS X
+brew install cmake libomp
+```
+
 ### Data
 
 Download [titanic data from kaggle](https://www.kaggle.com/competitions/titanic/data), or use Kaggle API to download the data as below.
@@ -17,7 +29,7 @@ $ rm titanic.zip
 
 ### Cargo-make (Optional)
 
-Install `cargo-make` as a task runner
+Install `cargo-make` as a task runner.
 
 ```
 cargo install --force cargo-make
@@ -29,7 +41,7 @@ cargo install --force cargo-make
 $ cargo run
 ```
 
-If you installed `cargo-make`, you can execute as below
+If you installed `cargo-make`, you can execute as below.
 
 ```
 $ cargo make run expXXX
@@ -59,7 +71,7 @@ Public Score: 0.75119
 
 ## Development
 
-See the output of `cargo make --list-all-steps`
+See the output of `cargo make --list-all-steps`.
 
 ```
 cargo make --list-all-steps

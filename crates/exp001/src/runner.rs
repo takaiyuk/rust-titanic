@@ -5,7 +5,7 @@ use crate::feature::AbstractFeatureTransformer;
 use crate::kfold::AbstractKFold;
 use crate::loader::InputData;
 use crate::metrics::accuracy;
-use crate::model::{AbstractModel, LightGBMModel};
+use crate::model::AbstractGBDTModel;
 
 const MODEL_PATH_PREFIX: &str = "output/models";
 
@@ -32,7 +32,7 @@ pub struct LightGBMRunner {
     config: Config,
     feature_transformer: Box<dyn AbstractFeatureTransformer>,
     kfold: Box<dyn AbstractKFold>,
-    model: LightGBMModel,
+    model: Box<dyn AbstractGBDTModel>,
 }
 
 impl LightGBMRunner {
@@ -40,7 +40,7 @@ impl LightGBMRunner {
         config: Config,
         feature_transformer: Box<dyn AbstractFeatureTransformer>,
         kfold: Box<dyn AbstractKFold>,
-        model: LightGBMModel,
+        model: Box<dyn AbstractGBDTModel>,
     ) -> Self {
         Self {
             config,

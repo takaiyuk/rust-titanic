@@ -15,6 +15,11 @@ pub trait AbstractModel {
     fn save(&self, path: &str) -> Result<()>;
 }
 
+pub trait AbstractGBDTModel: AbstractModel {
+    fn feature_names(&self) -> Result<Option<Vec<String>>>;
+    fn feature_importances(&self) -> Result<Vec<f64>>;
+}
+
 pub struct LightGBMModel {
     booster: Option<lgb::Booster>,
     feature_names: Option<Vec<String>>,
@@ -26,15 +31,6 @@ impl LightGBMModel {
             booster: None,
             feature_names: None,
         }
-    }
-
-    pub fn feature_names(&self) -> Result<Option<Vec<String>>> {
-        Ok(self.feature_names.clone())
-    }
-
-    pub fn feature_importances(&self) -> Result<Vec<f64>> {
-        let feature_importances = self.booster.as_ref().unwrap().feature_importance()?;
-        Ok(feature_importances)
     }
 }
 
@@ -73,13 +69,21 @@ impl AbstractModel for LightGBMModel {
             .map(|feature_data| feature_data.features.clone())
             .collect::<Vec<_>>();
         let result = self.booster.as_ref().unwrap().predict(data)?;
-        // NOTE: `result` is a vector [[n_rows]] because of binary classification.
-        // ref: https://github.com/vaaaaanquish/lightgbm-rs/blob/fdac51534170d6ff23d2628827d0d620128f4c1f/src/booster.rs#L94-L148
         Ok(result[0].clone())
     }
 
     fn save(&self, path: &str) -> Result<()> {
         self.booster.as_ref().unwrap().save_file(path)?;
         Ok(())
+    }
+}
+
+impl AbstractGBDTModel for LightGBMModel {
+    fn feature_names(&self) -> Result<Option<Vec<String>>> {
+        Ok(self.feature_names.clone())
+    }
+
+    fn feature_importances(&self) -> Result<Vec<f64>> {
+        Ok(self.booster.as_ref().unwrap().feature_importance()?)
     }
 }
