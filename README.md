@@ -76,7 +76,6 @@ See the output of `cargo make --list-all-steps`.
 ```
 cargo make --list-all-steps
 [cargo-make] INFO - cargo make 0.36.3
-[cargo-make] INFO - Project: rust-titanic
 [cargo-make] INFO - Build File: Makefile.toml
 [cargo-make] INFO - Task: default
 [cargo-make] INFO - Profile: development
@@ -87,7 +86,12 @@ run - cargo run
 
 Development
 ----------
+clean - cargo clean
 format - cargo fmt
+
+Hooks
+----------
+init - Initial task to validate the number of arguments
 
 Test
 ----------
@@ -95,6 +99,6 @@ check - cargo check
 clippy - cargo clippy
 coverage - cargo llvm-cov
 coverage-html - cargo llvm-cov --html
-coverage-open - cargo llvm-cov --open
+coverage-open - open coverage report
 test - cargo nextest
 ```

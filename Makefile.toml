@@ -1,5 +1,17 @@
 [config]
 skip_core_tasks = true
+init_task = "init"
+
+[tasks.init]
+description = "Initial task to validate the number of arguments"
+category = "Hooks"
+script_runner = "@shell"
+script = '''
+if [ $# != 1 ]; then
+    echo "The number of arguments must be one (e.g. exp001): ${@}"
+    exit 1
+fi
+'''
 
 [tasks.format]
 description = "cargo fmt"
