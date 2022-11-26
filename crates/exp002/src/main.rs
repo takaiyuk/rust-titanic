@@ -14,7 +14,7 @@ use exp002::submission::generate_submission;
 const TRAIN_DATA_PATH: &str = "../../input/titanic/train.csv";
 const TEST_DATA_PATH: &str = "../../input/titanic/test.csv";
 const SAMPLE_SUBMISSION_DATA_PATH: &str = "../../input/titanic/gender_submission.csv";
-const SUBMISSION_PATH: &str = "../../output/submissions/submission.csv";
+const SUBMISSION_PATH: &str = "./output/submissions/submission.csv";
 
 fn calc_vec_mean(vec_vec: Vec<Vec<f64>>) -> Vec<f64> {
     let mut vec_mean: Vec<f64> = vec![];

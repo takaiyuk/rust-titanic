@@ -68,8 +68,13 @@ impl XGBoostRunner {
             .map(|x| x.survived.unwrap() as f64)
             .collect();
 
-        self.model
-            .train(&train_features, &train_label, &self.config.params)?;
+        self.model.train(
+            &train_features,
+            &valid_features,
+            &train_label,
+            &valid_label.iter().map(|x| *x as f32).collect::<Vec<f32>>(),
+            &self.config.params,
+        )?;
         self.model
             .save(&format!("{}/fold{}.dat", MODEL_PATH_PREFIX, fold + 1))?;
         let pred_valid = self.model.predict(&valid_features)?;
