@@ -3,6 +3,9 @@ use std::path::Path;
 use anyhow::Result;
 
 use exp002::config::{AbstractConfig, Config};
+use exp002::consts::{
+    SAMPLE_SUBMISSION_DATA_PATH, SUBMISSION_PATH, TEST_DATA_PATH, TRAIN_DATA_PATH,
+};
 use exp002::feature::FeatureTransformer;
 use exp002::kfold::StratifiedKFold;
 use exp002::loader::{load_test_data, load_train_data};
@@ -10,11 +13,6 @@ use exp002::metrics::accuracy;
 use exp002::model::XGBoostModel;
 use exp002::runner::{AbstractRunner, XGBoostRunner};
 use exp002::submission::generate_submission;
-
-const TRAIN_DATA_PATH: &str = "../../input/titanic/train.csv";
-const TEST_DATA_PATH: &str = "../../input/titanic/test.csv";
-const SAMPLE_SUBMISSION_DATA_PATH: &str = "../../input/titanic/gender_submission.csv";
-const SUBMISSION_PATH: &str = "./output/submissions/submission.csv";
 
 fn calc_vec_mean(vec_vec: Vec<Vec<f64>>) -> Vec<f64> {
     let mut vec_mean: Vec<f64> = vec![];
@@ -72,7 +70,7 @@ fn main() -> Result<()> {
     generate_submission(
         pred_test_label,
         project_root.join(SAMPLE_SUBMISSION_DATA_PATH),
-        project_root.join(SUBMISSION_PATH),
+        project_root.join(&*SUBMISSION_PATH),
     )?;
 
     Ok(())

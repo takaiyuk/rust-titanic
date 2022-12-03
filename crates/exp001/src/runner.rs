@@ -1,13 +1,12 @@
 use anyhow::Result;
 
 use crate::config::Config;
+use crate::consts::MODEL_PATH_PREFIX;
 use crate::feature::AbstractFeatureTransformer;
 use crate::kfold::AbstractKFold;
 use crate::loader::InputData;
 use crate::metrics::accuracy;
 use crate::model::AbstractGBDTModel;
-
-const MODEL_PATH_PREFIX: &str = "output/models";
 
 #[derive(Debug, Clone)]
 pub struct PredictionResult {
@@ -71,7 +70,7 @@ impl LightGBMRunner {
         self.model
             .train(&train_features, &train_label, &self.config.params)?;
         self.model
-            .save(&format!("{}/fold{}.dat", MODEL_PATH_PREFIX, fold + 1))?;
+            .save(&format!("{}/fold{}.dat", *MODEL_PATH_PREFIX, fold + 1))?;
         let pred_valid = self.model.predict(&valid_features)?;
         let score = accuracy(&valid_label, &pred_valid)?;
         println!("Accuracy: {:?}", score);

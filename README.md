@@ -38,7 +38,7 @@ cargo install --force cargo-make
 ## Execute
 
 ```
-$ cargo run
+$ cd crates/expXXX && cargo run
 ```
 
 If you installed `cargo-make`, you can execute as below.
