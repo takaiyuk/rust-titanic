@@ -1,0 +1,6 @@
+{
+    "rust-analyzer.linkedProjects": [
+      "${workspaceFolder}/crates/exp001/Cargo.toml",
+      "${workspaceFolder}/crates/exp002/Cargo.toml",
+    ],
+  }
